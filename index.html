@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Cadastro de Anúncios</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i>Divulga</i><b>Tudo</b></a>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link p-0">Cadastro de Anúncios</a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12 mt-4 pt-2">
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab_cad" href="javascript:toggleTabs(0)" role="tab"> <i
+                                class="fa fa-archive mr-1"></i> Cadastro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab_rel" href="javascript:toggleTabs(1)" role="tab"> <i
+                                class="fa fa-print"></i> Relatórios</a>
+                    </li>
+                </ul>
+
+                <div id="tela_cadastro">
+
+                    <form id="form_cadastro">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="anuncio">Nome do Anúncio:</label>
+                                    <input type="text" class="form-control form-control-sm shadow-sm" autofocus
+                                        id="anuncio">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cliente">Cliente:</label>
+                                    <input type="text" class="form-control form-control-sm shadow-sm" id="cliente">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="invest-diario">Investimento Diário:</label>
+                                <div class="input-group input-group-sm shadow-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">R$</span>
+                                    </div>
+                                    <input type="number" id="invest-diario"
+                                        class="form-control form-control-sm text-right" value="0">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="data-inicio">Data Início:</label>
+                                <input type="date" id="data-inicio" class="form-control form-control-sm shadow-sm">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="data-termino">Data Término:</label>
+                                <input type="date" id="data-termino" class="form-control form-control-sm shadow-sm">
+                            </div>
+
+                        </div>
+
+
+                        <button type="reset" class="btn btn-light btn-sm mt-4 px-3 mr-2 shadow-sm"
+                            onclick="msg();document.getElementById('anuncio').focus()"> <i class="fa fa-times mr-1"></i>
+                            Cancelar</button>
+                        <button type="button" onclick="salvarAnuncio()"
+                            class="btn btn-success btn-sm mt-4 px-3 shadow-sm"> <i class="fa fa-save mr-1"></i>
+                            Cadastrar</button>
+
+                        <div id="mensagem" class="shadow-sm"></div>
+                    </form>
+                </div>
+                <div id="tela_relatorio">
+
+                    <div class="filtros row">
+                        <div class="col-md-4">
+                            <label for="select_filtro">Filtros:</label>
+                            <select class="custom-select custom-select-sm shadow-sm" id="select_filtro"
+                                onchange="toggleFilter(this)">
+                                <option value="cliente">Por cliente</option>
+                                <option value="periodo">Por período</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-8" id="filtro_cliente">
+                            <label for="busca_cliente">Digite o nome do cliente:</label>
+                            <input type="text" class="form-control form-control-sm shadow-sm" id="busca_cliente"
+                                onkeyup="getItems(this.value)">
+                        </div>
+                        <div id="filtro_periodo" class="col-md-8 row">
+                            <div class="d-flex align-items-end">
+                                <div class="mr-4">
+                                    <label for="data-inicio">Data Início:</label>
+                                    <input type="date" id="dIni" class="form-control form-control-sm shadow-sm">
+                                </div>
+                                <div class="">
+                                    <label for="data-termino">Data Término:</label>
+                                    <input type="date" id="dFin" class="form-control form-control-sm shadow-sm">
+                                </div>
+                                <div class="ml-3">
+                                    <button class="btn btn-warning btn-sm px-3 shadow-sm" onclick="getItems()"> <i
+                                            class="fa fa-search"></i> Pesquisar</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#ID</th>
+                                    <th scope="col">Cliente</th>
+                                    <th scope="col">Anúncio</th>
+                                    <th scope="col">Data Início</th>
+                                    <th scope="col">Data Término</th>
+                                    <th scope="col">Visualizações</th>
+                                    <th scope="col">Clicks</th>
+                                    <th scope="col">Compartilhamentos</th>
+                                    <th scope="col">Valor Diário</th>
+                                    <th scope="col">Total Investido</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="result"></tbody>
+                        </table>
+                    </div>
+                    <div id="empty"></div>
+                </div>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+</body>
+</html>
